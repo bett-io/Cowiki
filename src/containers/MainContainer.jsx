@@ -7,13 +7,8 @@ import About from '../components/About';
 import Hello from '../components/Hello';
 import { Route, Switch } from 'react-router-dom';
 
-const MainContainer = ({ sessionCounter }) => (
+const MainContainer = () => (
   <div>
-    <div>
-      <strong>Session counter: {sessionCounter.counter}</strong>
-      <br/>
-      (Note that this value is incresed only when server side rendering requested)
-    </div>
     <Switch>
       <Route exact path='/' component={Home}/>
       <Route path='/repos' component={Repos}/>
@@ -23,11 +18,7 @@ const MainContainer = ({ sessionCounter }) => (
   </div>
 );
 
-const mapStateToProps = state => ({
-  sessionCounter: state.sessionCounter,
-});
-
 export default connectWithRouter(
-  mapStateToProps,
+  null,
   null,
 )(MainContainer);

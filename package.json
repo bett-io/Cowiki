@@ -1,5 +1,5 @@
 {
-  "name": "helloworld-lambda-web",
+  "name": "cowiki.io",
   "version": "1.0.0",
   "description": "Helloworld on lambda for a web",
   "main": "index.js",
