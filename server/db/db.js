@@ -4,7 +4,7 @@ import loki from './loki';
 
 const { createArticle, readArticle, updateArticle } = loki;
 
-export {
+export default {
   createArticle,
   readArticle,
   updateArticle,
