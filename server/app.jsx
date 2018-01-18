@@ -11,6 +11,7 @@ import { Provider } from 'react-redux';
 
 import createReduxStore from '../modules/store';
 
+import article from './apis/article';
 import auth from './apis/auth';
 import session from './libs/session';
 
@@ -24,6 +25,48 @@ app.use(bodyParser.json()); // for parsing POST body
 app.use(session.createSessionMiddleware());
 app.use(express.static(path.join(__dirname, './public')));
 
+// Article APIs
+app.post('/api/article/:id', (req, res) => {
+  const func = 'app.post /api/article/:id';
+  console.log({ file, func, params: req.params, body: req.body});
+
+  const { content } = req.body;
+
+  article.create(req.params.id, content)
+    .then(result => res.send(result))
+    .catch(error => {
+      console.log({ file, func, error });
+      res.status(403).send(error);
+    });
+});
+
+app.get('/api/article/:id', (req, res) => {
+  const func = 'app.get /api/article/:id';
+  console.log({ file, func, params: req.params });
+
+  article.read(req.params.id)
+    .then(result => res.send(result))
+    .catch(error => {
+      console.log({ file, func, error });
+      res.status(403).send(error);
+    });
+});
+
+app.put('/api/article/:id', (req, res) => {
+  const func = 'app.put /api/article/:id';
+  console.log({ file, func, params: req.params, body: req.body });
+
+  const { content, rev } = req.body;
+
+  article.update(req.params.id, content, rev)
+    .then(result => res.send(result))
+    .catch(error => {
+      console.log({ file, func, error });
+      res.status(403).send(error);
+    });
+});
+
+// Pages
 app.get('*', (req, res) => {
   console.log({ function:'app.get', req: { url: req.url } });
 
