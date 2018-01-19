@@ -2,14 +2,27 @@
 
 import React from 'react';
 
-const Article = (props) => {
-  console.log(props);
-  const { pageId } = props;
+import NoArticle from './NoArticle';
+import { Link } from 'react-router-dom';
+
+export type ArticleProps = {
+  pageId: string,
+  content: string,
+  revision: number,
+}
+
+const Article = ({ pageId, content, revision }: ArticleProps) => {
+  if (revision === undefined) return <NoArticle pageId={pageId} />;
 
   return (
     <div>
-      The article that you're looking for doesn't exist.<br/>
-      <a href={`/edit/${pageId}`}>Do you want to create new article?</a>
+      <h1>{pageId}</h1>
+      <br />
+      content: {content}
+      <br />
+      revision: {revision}
+      <br />
+      <Link to={`/edit/${pageId}`}>Edit</Link>
     </div>
   );
 };

@@ -20,9 +20,19 @@ function user(state = userDefault, action) {
   }
 }
 
+const articles = (state = {}, action) => {
+  switch (action.type) {
+    case 'UPDATE_ARTICLE':
+      return Object.assign({}, state, { [action.id]: action.article });
+    default:
+      return state;
+  }
+};
+
 const reducer = combineReducers({
   sessionCounter,
   user,
+  articles,
 });
 
 export default reducer;
