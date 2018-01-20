@@ -1,8 +1,13 @@
 // @Flow
 
 import { create, read, update } from '../article';
+import db from '../../db/db';
 
 describe('article', () => {
+  beforeEach(() => {
+    db.init(true);
+  });
+
   test('read should return null for non-exist article request', () => {
     expect.assertions(1);
     return read('nonExist').then((result) => {

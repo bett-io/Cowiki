@@ -1,5 +1,3 @@
-'use strict';
-
 const express = require('express');
 const path = require('path');
 
@@ -13,11 +11,41 @@ import createReduxStore from '../modules/store';
 
 import article from './apis/article';
 import auth from './apis/auth';
+import db from './db/db';
 import session from './libs/session';
 
 import App from '../src/containers/App';
 
 const file = 'server/app.js';
+
+const getConfig = () => {
+  const env = process.env;
+
+  const isProd = env.NODE_ENV === 'production';
+  const useLoki = env.DB === 'loki';
+  const aws = {};
+
+  if (!useLoki) {
+    const region = env.AWS_REGION;
+    if (!region) {
+      console.error(`AWS_REGION environment variable should be given to use DynamoDB.
+        If you want to use local DB instead, set DB environment variable to 'loki'`);
+      return undefined;
+    }
+    aws.region = region;
+  }
+
+  return {
+    isProd,
+    useLoki,
+    aws,
+  };
+}
+
+const config = getConfig();
+if (!config) process.exit(-1);
+
+db.init(config.useLoki, config.aws.region);
 
 const app = express();
 
@@ -45,7 +73,10 @@ app.get('/api/article/:id', (req, res) => {
   console.log({ file, func, params: req.params });
 
   article.read(req.params.id)
-    .then(result => res.send(result))
+    .then(result => {
+      console.log({ file, func, result });
+      res.send(result)
+    })
     .catch(error => {
       console.log({ file, func, error });
       res.status(403).send(error);
@@ -68,7 +99,7 @@ app.put('/api/article/:id', (req, res) => {
 
 // Pages
 app.get('*', (req, res) => {
-  console.log({ function:'app.get', req: { url: req.url } });
+  console.log({ file, function:'app.get', req: { url: req.url } });
 
   const context = {};
 
