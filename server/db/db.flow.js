@@ -7,3 +7,9 @@ export type Article = {
   content: string,
   rev: number,
 }
+
+export type CreateArticle = Article;
+export type ReadArticle = {
+  id: string,
+};
+export type UpdateArticle = Article;
