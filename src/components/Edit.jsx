@@ -18,15 +18,15 @@ const Edit = (props: EditProps) => {
 
   const handleSubmit = () => {
     onSubmit(updatedContent, revision);
-  }
+  };
 
   const handleTitleChange = (e) => {
     title = e.target.value;
-  }
+  };
 
   const handleContentChange = (e) => {
     updatedContent = e.target.value;
-  }
+  };
 
   return (
     <div>
