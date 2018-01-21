@@ -10,9 +10,7 @@
     "build:client": "webpack --env production -p --config webpack.client.config.js",
     "build:server": "webpack -p --config webpack.server.config.js",
     "build": "npm run build:client && npm run build:server",
-    "build:standalone:client": "webpack --config webpack.standalone.client.config.js",
-    "build:standalone:server": "webpack --config webpack.standalone.server.config.js",
-    "build:standalone": "npm run build:standalone:client && npm run build:standalone:server",
+    "build:standalone": "webpack --config webpack.standalone.config.js",
     "dist": "cp package.json ./dist/ && cd ./dist && npm install --production",
     "lint": "eslint . --cache",
     "flow": "flow",
@@ -41,6 +39,7 @@
     "react": "^16.2.0",
     "react-bootstrap": "^0.31.5",
     "react-dom": "^16.2.0",
+    "react-hot-loader": "^4.0.0-beta.16",
     "react-redux": "^5.0.4",
     "react-router-bootstrap": "^0.24.2",
     "react-router-dom": "^4.1.2",
@@ -71,6 +70,7 @@
     "style-loader": "^0.19.1",
     "webpack": "^3.10.0",
     "webpack-dev-server": "^2.3.0",
+    "webpack-hot-middleware": "^2.21.0",
     "webpack-merge": "^4.1.0"
   }
 }
