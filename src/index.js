@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-filename-extension */
 
 import React from 'react';
-import { render } from 'react-dom';
+import { hydrate } from 'react-dom';
 import './styles/index.css';
 import { Provider } from 'react-redux';
 import createReduxStore from '../modules/store';
@@ -13,7 +13,7 @@ const initialState = window.__INITIAL_STATE__;
 
 const store = createReduxStore(initialState);
 
-render(
+hydrate(
   <Provider store={store}>
     <BrowserRouter>
       <App />
