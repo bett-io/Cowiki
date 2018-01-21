@@ -8,10 +8,10 @@ describe('article', () => {
     db.init(true);
   });
 
-  test('read should return null for non-exist article request', () => {
+  test('read should return an article with revision -1 when the article is not exist in db', () => {
     expect.assertions(1);
     return read('nonExist').then((result) => {
-      expect(result).toBeNull();
+      expect(result).toEqual({ id: 'nonExist', rev: -1 });
     });
   });
 
