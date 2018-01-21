@@ -19,7 +19,7 @@ const ArticleContainer = (props) => {
 const readArticle = id => async (dispatch) => {
   const result = await axios.get(`/api/article/${id}`);
 
-  if (result.status !== 200 || result.data.rev === undefined) return;
+  if (result.status !== 200) return;
 
   dispatch(updateArticle(id, result.data));
 };
