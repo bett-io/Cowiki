@@ -54,13 +54,13 @@ app.use(session.createSessionMiddleware());
 app.use(express.static(path.join(__dirname, './public')));
 
 // Article APIs
-app.post('/api/article/:id', (req, res) => {
+app.post('/api/article/*?', (req, res) => {
   const func = 'app.post /api/article/:id';
   console.log({ file, func, params: req.params, body: req.body});
 
   const { content } = req.body;
 
-  article.create(req.params.id, content)
+  article.create(req.params[0], content)
     .then(result => res.send(result))
     .catch(error => {
       console.log({ file, func, error });
@@ -68,11 +68,13 @@ app.post('/api/article/:id', (req, res) => {
     });
 });
 
-app.get('/api/article/:id', (req, res) => {
+app.get('/api/article/*?', (req, res) => {
   const func = 'app.get /api/article/:id';
   console.log({ file, func, params: req.params });
 
-  article.read(req.params.id)
+  console.log(req.params);
+
+  article.read(req.params[0])
     .then(result => {
       console.log({ file, func, result });
       res.send(result)
@@ -83,13 +85,13 @@ app.get('/api/article/:id', (req, res) => {
     });
 });
 
-app.put('/api/article/:id', (req, res) => {
+app.put('/api/article/*?', (req, res) => {
   const func = 'app.put /api/article/:id';
   console.log({ file, func, params: req.params, body: req.body });
 
   const { content, rev } = req.body;
 
-  article.update(req.params.id, content, rev)
+  article.update(req.params[0], content, rev)
     .then(result => res.send(result))
     .catch(error => {
       console.log({ file, func, error });

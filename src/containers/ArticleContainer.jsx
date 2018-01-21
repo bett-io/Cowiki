@@ -7,9 +7,13 @@ import connectWithRouter from '../../modules/connectWithRouter';
 import Article from '../components/Article';
 import { updateArticle } from '../actions/article';
 
+const file = '/src/containers/ArticleContainer';
+
 const ArticleContainer = (props) => {
   const { pageId } = props.match.params;
   const { content, revision, onReadArticle } = props;
+
+  console.log({ file, func: 'ArticleContainer', pageId });
 
   onReadArticle(pageId);
 

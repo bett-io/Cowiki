@@ -20,8 +20,8 @@ const MainContainer = () => (
           <Route path='/hello' component={Hello}/>
           <Route path='/about' component={About}/>
           <Route exact path='/w' component={ArticleContainer}/>
-          <Route exact path='/w/:pageId' component={ArticleContainer}/>
-          <Route exact path='/edit/:pageId' component={EditContainer}/>
+          <Route exact path='/w/:pageId(.+)' component={ArticleContainer}/>
+          <Route exact path='/edit/:pageId(.+)' component={EditContainer}/>
         </Switch>
       </Col>
     </Row>
