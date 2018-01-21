@@ -44,3 +44,4 @@ Or you can store those two environment variables to deploy.env file. Refer to no
 # TODO
 - https://github.com/motdotla/node-lambda (or other lambda deployment tool)
 - Integrate with CI tool (https://github.com/integrations/feature/continuous-integration)
+- Use webpack-hot-server-middleware

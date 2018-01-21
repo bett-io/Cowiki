@@ -1,9 +1,10 @@
 import React from 'react';
-import { initializeApp } from '../actions';
-import connectWithRouter from '../../modules/connectWithRouter';
 
+import connectWithRouter from '../../modules/connectWithRouter';
 import Header from '../components/Header';
 import MainContainer from '../containers/MainContainer';
+import { hot } from 'react-hot-loader';
+import { initializeApp } from '../actions';
 
 export class App extends React.Component {
   componentDidMount() {
@@ -22,4 +23,4 @@ export class App extends React.Component {
 
 const connectedApp = connectWithRouter(null, null)(App); // To use this.props.dispatch
 
-export default connectedApp;
+export default hot(module)(connectedApp);
