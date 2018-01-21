@@ -9,6 +9,7 @@ const config = {
 
   output: {
     path: path.join(__dirname, '/dist/public'),
+    publicPath: '/',
     filename: 'bundle.js',
   },
 
@@ -41,8 +42,11 @@ const config = {
 module.exports = (env) => {
   if (env === 'production') {
     config.plugins.push(new webpack.optimize.OccurrenceOrderPlugin());
+  } else {
+    config.plugins.push(new webpack.HotModuleReplacementPlugin());
+    config.plugins.push(new webpack.NoEmitOnErrorsPlugin());
+    config.entry.push('webpack-hot-middleware/client');
   }
 
   return config;
 };
-

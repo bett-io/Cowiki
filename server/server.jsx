@@ -1,6 +1,3 @@
-const express = require('express');
-const path = require('path');
-
 import bodyParser from 'body-parser';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
@@ -50,7 +47,6 @@ db.init(config.useLoki, config.aws.region);
 const setupServer = (app) => {
   app.use(bodyParser.json()); // for parsing POST body
   app.use(session.createSessionMiddleware());
-  app.use(express.static(path.join(__dirname, './public')));
 
   // Article APIs
   app.post('/api/article/*?', (req, res) => {
