@@ -2,9 +2,12 @@
 
 import React from 'react';
 
+import marked from 'marked';
+import { Link } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
+
 import ArticleLoading from './ArticleLoading';
 import NoArticle from './NoArticle';
-import { Link } from 'react-router-dom';
 
 export type ArticleProps = {
   pageId: string,
@@ -23,12 +26,11 @@ const Article = ({ pageId, content, revision }: ArticleProps) => {
   return (
     <div>
       <h1>{pageId}</h1>
-      <br />
-      content: {content}
-      <br />
       revision: {revision}
-      <br />
-      <Link to={`/edit/${pageId}`}>Edit</Link>
+      <Link to={`/edit/${pageId}`}>
+        <Button className="pull-right" bsStyle="success">Edit</Button>
+      </Link>
+      <div dangerouslySetInnerHTML={{ __html: marked(content) }} />
     </div>
   );
 };
