@@ -36,6 +36,7 @@
     "express": "^4.14.1",
     "express-session": "^1.15.5",
     "lokijs": "^1.5.1",
+    "marked": "^0.3.12",
     "prop-types": "^15.5.9",
     "react": "^16.2.0",
     "react-bootstrap": "^0.31.5",
