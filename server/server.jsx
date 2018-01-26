@@ -95,33 +95,28 @@ const setupServer = (app) => {
   });
 
   // Pages
+  app.get('/w/*?', (req, res) => {
+    const func = 'app.get /w/:id';
+
+    console.log({ file, func, params: req.params });
+
+    article.read(req.params[0])
+      .then(result => {
+        console.log({ file, func, result });
+        const articleState = { articles: { [req.params[0]]: result }}
+
+        return renderPage(req, res, articleState)
+      })
+      .catch(error => {
+        console.log({ file, func, error });
+        res.status(403).send(error);
+      });
+  });
+
   app.get('*', (req, res) => {
-    console.log({ file, function:'app.get', req: { url: req.url } });
+    console.log({ file, func: 'app.get *', req: { url: req.url }, params: req.params });
 
-    const context = {};
-
-    // counter in session for demo
-    if (!req.session.counter) req.session.counter = 0;
-    req.session.counter++;
-
-    const initialState = session.createInitialReduxState(req.session);
-    const store = createReduxStore(initialState);
-
-    const appHtml = renderToString(
-      <Provider store={store}>
-        <StaticRouter
-          location={req.url}
-          context={context}>
-          <App/>
-        </StaticRouter>
-      </Provider>
-    );
-
-    if (context.url) {
-      res.redirect(302, context.url);
-    } else {
-      res.send(renderPage(appHtml, store.getState()));
-    }
+    return renderPage(req, res)
   });
 
   app.post('/signin', (req, res) => {
@@ -142,7 +137,34 @@ const setupServer = (app) => {
   });
 }
 
-function renderPage(appHtml, initialState) {
+const renderPage = (req, res, initialState) => {
+  const context = {};
+
+  // counter in session for demo
+  if (!req.session.counter) req.session.counter = 0;
+  req.session.counter++;
+
+  const sessionState = session.createInitialReduxState(req.session);
+  const store = createReduxStore(Object.assign({}, initialState, sessionState));
+
+  const appHtml = renderToString(
+    <Provider store={store}>
+      <StaticRouter
+        location={req.url}
+        context={context}>
+        <App/>
+      </StaticRouter>
+    </Provider>
+  );
+
+  if (context.url) {
+    res.redirect(302, context.url);
+  } else {
+    res.send(renderHtml(appHtml, store.getState()));
+  }
+}
+
+function renderHtml(appHtml, initialState) {
   return `
     <!doctype html public="storage">
     <html>
