@@ -11,7 +11,12 @@ if (process.env.NODE_ENV === 'production') {
   socialConfig = socialProdConfig;
 }
 
+const authConfig = {
+  'jwt': { secret: process.env.JWT_SECRET || 'jwt_secret' },
+};
+
 export {
+  authConfig,
   awsConfig,
   socialConfig,
 };
