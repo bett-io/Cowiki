@@ -1,29 +1,25 @@
+// @flow
+
 import axios from 'axios';
 
-const signin = async (fbToken) => {
-  const response = await axios.post('/signin', {
-    fbToken,
-  });
+const file = '/src/libs/apiserver';
 
-  console.log({ function: 'apiserver.signin', response });
+const signin = async (userName: string, password: string) => {
+  const res = await axios.post('/api/signin', { params: { userName, password } });
 
-  return response;
+  console.log({ file, func: 'signin', userName, res });
+
+  if (res.status !== 200) throw 'server error';
+
+  if (res.data && res.data.error) throw res.data.error;
+
+  return res.data.user;
 };
 
 const signout = async () => {
-  const response = await axios.post('/signout', {});
+  const response = await axios.post('/api/signout', {});
 
-  console.log({ function: 'apiserver.signout', response });
-
-  return response;
-};
-
-const updateSessionState = async (state) => {
-  const response = await axios.post('/sessionState', {
-    state,
-  });
-
-  console.log({ function: 'apiserver.updateSessionState', response });
+  console.log({ file, func: 'signout', response });
 
   return response;
 };
@@ -31,5 +27,4 @@ const updateSessionState = async (state) => {
 export default {
   signin,
   signout,
-  updateSessionState,
 };

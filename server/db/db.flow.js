@@ -8,8 +8,18 @@ export type Article = {
   rev: number,
 }
 
+export type User = {
+  id: string,
+  password: string,
+}
+
 export type CreateArticle = Article;
 export type ReadArticle = {
   id: string,
 };
 export type UpdateArticle = Article;
+
+export type CreateUser = User;
+export type ReadUser = {
+  id: string,
+};

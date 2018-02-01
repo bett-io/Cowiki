@@ -1,19 +1,19 @@
-import bodyParser from 'body-parser';
 import React from 'react';
-import { renderToString } from 'react-dom/server';
-import { StaticRouter } from 'react-router-dom';
-import { Provider } from 'react-redux';
-
-import createReduxStore from '../modules/store';
-
-import article from './apis/article';
-import auth from './apis/auth';
-import db from './db/db';
-import session from './libs/session';
 
 import App from '../src/containers/App';
+import article from './apis/article';
+import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+import createReduxStore from '../modules/store';
+import db from './db/db';
+import expressJwt, { UnauthorizedError as Jwt401Error } from 'express-jwt';
+import jwt from 'jsonwebtoken';
+import { StaticRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { authConfig } from '../config';
+import { renderToString } from 'react-dom/server';
 
-const file = 'server/app.js';
+const file = 'server/server.jsx';
 
 const getConfig = () => {
   const env = process.env;
@@ -45,8 +45,8 @@ if (!config) process.exit(-1);
 db.init(config.useLoki, config.aws.region);
 
 const setupServer = (app) => {
+  app.use(cookieParser());
   app.use(bodyParser.json()); // for parsing POST body
-  app.use(session.createSessionMiddleware());
 
   // Article APIs
   app.post('/api/article/*?', (req, res) => {
@@ -94,6 +94,89 @@ const setupServer = (app) => {
       });
   });
 
+  // Authentication APIs
+  const setIdCookie = (res, user) => {
+    const expiresIn = 60 * 60 * 24 * 180; // 180 days
+    const token = jwt.sign(user, authConfig.jwt.secret, { expiresIn });
+    res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
+  }
+
+  app.post('/api/signin', (req, res) => {
+    const func = 'app.post /api/signin';
+
+    console.log({ file, func, params: req.body.params });
+
+    const { userName, password } = req.body.params;
+
+    db.readUser({ id: userName }).then((user) => {
+      if (!user) {
+        res.send({ error: 'unregistered username' });
+        return;
+      }
+
+      if (user.password !== password) {
+        res.send({ error: 'password mismatch' });
+        return;
+      }
+
+      const { id } = user;
+      req.user = (({ id }) => ({ id }))(user);
+
+      setIdCookie(res, req.user);
+
+      res.send({ user: req.user });
+    }).catch(error => {
+      console.log({ file, func, error });
+      res.status(403).send(error);
+    })
+  });
+
+  app.post('/api/signup', (req, res) => {
+    const func = 'app.post /api/signup';
+
+    console.log({ file, func, params: req.body.params });
+
+    const { userName, password } = req.body.params;
+
+    db.createUser({ id: userName, password }).then(() => {
+      const user = { id: userName };
+      setIdCookie(res, user);
+
+      res.send({ user });
+    }).catch(error => {
+      console.log({ file, func, error });
+      res.status(403).send(error);
+    })
+  });
+
+  app.post('/api/signout', (req, res) => {
+    const func = 'app.get /api/signout';
+
+    console.log({ file, func });
+
+    res.clearCookie('id_token');
+    res.send();
+  });
+
+  // Authentication
+  app.use(
+    expressJwt({
+      secret: authConfig.jwt.secret,
+      credentialsRequired: false,
+      getToken: req => { console.log(req.cookies); return req.cookies ? req.cookies.id_token : undefined },
+    }),
+  );
+  // Error handler for express-jwt
+  app.use((err, req, res, next) => {
+    const func = 'app.use Jwt401Error';
+
+    if (err instanceof Jwt401Error) {
+      console.error(file, func, req.cookies.id_token);
+      res.clearCookie('id_token');
+    }
+    next(err);
+  });
+
   // Pages
   app.get('/w/*?', (req, res) => {
     const func = 'app.get /w/:id';
@@ -118,34 +201,14 @@ const setupServer = (app) => {
 
     return renderPage(req, res)
   });
-
-  app.post('/signin', (req, res) => {
-    console.log({ file, function:'post', req: { url: req.url } });
-
-    auth.signin(req)
-      .then((result) => res.send(result))
-      .catch((error) => {
-        console.log({ file, function: 'post', error });
-        res.status(403).send(error);
-      });
-  });
-
-  app.post('/signout', (req, res) => {
-    console.log({ function:'app.post', req: { url: req.url } });
-
-    res.send(auth.signout(req, res));
-  });
 }
 
 const renderPage = (req, res, initialState) => {
   const context = {};
 
-  // counter in session for demo
-  if (!req.session.counter) req.session.counter = 0;
-  req.session.counter++;
+  const store = createReduxStore(Object.assign({}, { user: req.user }, initialState));
 
-  const sessionState = session.createInitialReduxState(req.session);
-  const store = createReduxStore(Object.assign({}, initialState, sessionState));
+  console.log({ file, func: 'renderPage', user: req.user, initialState });
 
   const appHtml = renderToString(
     <Provider store={store}>

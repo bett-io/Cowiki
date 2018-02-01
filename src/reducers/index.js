@@ -6,14 +6,12 @@ function sessionCounter(state = { counter: 0 }) {
 }
 
 const userDefault = {
-  uid: 0,
-  name: '',
-  fbToken: 0,
+  id: undefined,
 };
 
 function user(state = userDefault, action) {
   switch (action.type) {
-    case 'USER_UPDATED':
+    case 'UPDATE_USER':
       return action.user;
     default:
       return state;

@@ -15,7 +15,7 @@ const read = async (id: string): Promise<?Article> => {
   const article = await db.readArticle({ id });
 
   return article || { id, rev: -1 };
-}
+};
 
 const update = async (id: string, content: string, currentRev: number): Promise<any> => {
   const article = await read(id);

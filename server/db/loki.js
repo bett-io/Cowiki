@@ -4,10 +4,19 @@
 
 import loki from 'lokijs';
 
-import type { CreateArticle, ReadArticle, UpdateArticle, Article } from './db.flow';
+import type {
+  CreateArticle,
+  ReadArticle,
+  UpdateArticle,
+  Article,
+  CreateUser,
+  ReadUser,
+  User,
+} from './db.flow';
 
 const db = new loki('local.db');
 const articles = db.addCollection('article');
+const users = db.addCollection('user');
 
 const file = 'server/db/loki.js';
 
@@ -29,8 +38,22 @@ const updateArticle = (doc: UpdateArticle): boolean => {
   return articles.update(doc);
 };
 
+const createUser = (doc: CreateUser): boolean => {
+  console.log({ file, function: 'createUser', doc });
+
+  return users.insert(doc);
+};
+
+const readUser = (doc: ReadUser): ?User => {
+  console.log({ file, function: 'readUser', doc });
+
+  return users.findOne(doc);
+};
+
 export default {
   createArticle,
   readArticle,
   updateArticle,
+  createUser,
+  readUser,
 };

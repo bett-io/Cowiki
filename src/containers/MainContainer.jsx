@@ -7,6 +7,7 @@ import About from '../components/About';
 import Hello from '../components/Hello';
 import ArticleContainer from './ArticleContainer';
 import EditContainer from './EditContainer';
+import SigninupContainer from './SigninupContainer';
 import { Route, Switch } from 'react-router-dom';
 import { Grid, Row, Col } from 'react-bootstrap';
 
@@ -22,6 +23,7 @@ const MainContainer = () => (
           <Route exact path='/w' component={ArticleContainer}/>
           <Route exact path='/w/:pageId(.+)' component={ArticleContainer}/>
           <Route exact path='/edit/:pageId(.+)' component={EditContainer}/>
+          <Route exact path='/signinup' component={SigninupContainer}/>
         </Switch>
       </Col>
     </Row>
