@@ -104,9 +104,9 @@ const setupServer = (app) => {
   app.post('/api/signin', (req, res) => {
     const func = 'app.post /api/signin';
 
-    console.log({ file, func, params: req.body.params });
+    console.log({ file, func, body: req.body });
 
-    const { userName, password } = req.body.params;
+    const { userName, password } = req.body;
 
     db.readUser({ id: userName }).then((user) => {
       if (!user) {
@@ -134,9 +134,9 @@ const setupServer = (app) => {
   app.post('/api/signup', (req, res) => {
     const func = 'app.post /api/signup';
 
-    console.log({ file, func, params: req.body.params });
+    console.log({ file, func, body: req.body });
 
-    const { userName, password } = req.body.params;
+    const { userName, password } = req.body;
 
     db.createUser({ id: userName, password }).then(() => {
       const user = { id: userName };
