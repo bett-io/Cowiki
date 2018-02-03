@@ -19,7 +19,8 @@ module.exports = {
     }
   },
   plugins: [
-    'react'
+    'react',
+    'flowtype'
   ],
   rules: {
     'arrow-body-style': ['error', 'as-needed', {
@@ -108,5 +109,7 @@ module.exports = {
       asyncArrow: 'always'
     }],
     'spaced-comment': ERROR,
+    'flowtype/define-flow-type': 1,
+    'flowtype/use-flow-type': 1,
   },
 };

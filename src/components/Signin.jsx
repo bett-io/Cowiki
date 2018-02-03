@@ -8,37 +8,73 @@ export type SigninProps = {
   onSubmit: (string, string) => void,
 }
 
-const Signin = (props: SigninProps) => {
-  const { onSubmit } = props;
-  let userName;
-  let password;
+export type State = {
+  submitable: boolean,
+}
 
-  const handleSubmit = () => {
-    onSubmit(userName, password);
-  };
+export class Signin extends React.Component<SigninProps, State> {
+  userName: string;
+  password: string;
+  handleSubmit: () => void;
+  handleUserIdChange: (SyntheticEvent<HTMLInputElement>) => void;
+  handlePasswordChange: (SyntheticEvent<HTMLInputElement>) => void;
 
-  const handleUserIdChange = (e) => {
-    userName = e.target.value;
-  };
+  constructor(props: SigninProps) {
+    super(props);
+    this.state = {
+      submitable: false,
+    };
 
-  const handlePasswordChange = (e) => {
-    password = e.target.value;
-  };
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleUserIdChange = this.handleUserIdChange.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
 
-  return (
-    <div>
-      <FormGroup>
-        <h5>Username</h5>
-        <FormControl type="text" value={userName} placeholder=""
-          onChange={handleUserIdChange} />
-        <h5>Password</h5>
-        <FormControl type="password" value={password} placeholder=""
-          onChange={handlePasswordChange} />
-        <br/>
-        <Button bsStyle="success" onClick={handleSubmit} block>Signin</Button>
-      </FormGroup>
-    </div>
-  );
-};
+    this.userName = '';
+    this.password = '';
+  }
+
+  handleSubmit() {
+    this.props.onSubmit(this.userName, this.password);
+  }
+
+  updateButton() {
+    const submitable = this.userName.length > 3 && this.password.length > 0;
+    this.setState({ submitable });
+  }
+
+  handleUserIdChange(e: SyntheticEvent<HTMLInputElement>) {
+    this.userName = e.currentTarget.value;
+    this.updateButton();
+  }
+
+  handlePasswordChange(e: SyntheticEvent<HTMLInputElement>) {
+    this.password = e.currentTarget.value;
+    this.updateButton();
+  }
+
+  render() {
+    return (
+      <div>
+        <FormGroup>
+          <h5>Username</h5>
+          <FormControl type="text" placeholder=""
+            onChange={this.handleUserIdChange} />
+          <h5>Password</h5>
+          <FormControl type="password" placeholder=""
+            onChange={this.handlePasswordChange} />
+          <br/>
+          <Button
+            bsStyle="success"
+            onClick={this.handleSubmit}
+            disabled={!this.state.submitable}
+            block
+          >
+            Signin
+          </Button>
+        </FormGroup>
+      </div>
+    );
+  }
+}
 
 export default Signin;
