@@ -2,59 +2,157 @@
 
 import React from 'react';
 
-import { FormGroup, FormControl, Button } from 'react-bootstrap';
-
-const file = '/src/components/Signup.jsx';
+import {
+  Button,
+  ControlLabel,
+  FormGroup,
+  FormControl,
+  HelpBlock,
+} from 'react-bootstrap';
 
 export type SignupProps = {
-  onSubmit: (string, string) => void,
+  onSubmit: (string, string, string) => void,
 }
 
-const Signup = (props: SignupProps) => {
-  const { onSubmit } = props;
-  let userName;
-  let password1;
-  let password2;
+type State = {
+  submitable: boolean,
+  userNameValid: ?string,
+  emailValid: ?string,
+  passwordValid: ?string,
+}
 
-  const handleSubmit = () => {
-    console.log({ file, func: 'handleSubmit', userName, password1, password2 });
-    if (userName.length < 4 || password1.length < 8 || password1 !== password2) return;
+const hasNumber = str => /\d/.test(str);
+const hasAlphabet = str => /[a-zA-Z]/.test(str);
+const isValidEmailForm = str => /.+@.+\..+/.test(str);
 
-    onSubmit(userName, password1);
-  };
+export class Signup extends React.Component<SignupProps, State> {
+  userName: string;
+  email: string;
+  password: string;
+  handleSubmit: () => void;
+  handleUserNameChange: (SyntheticEvent<HTMLInputElement>) => void;
+  handleEmailChange: (SyntheticEvent<HTMLInputElement>) => void;
+  handlePasswordChange: (SyntheticEvent<HTMLInputElement>) => void;
 
-  const handleUserNameChange = (e) => {
-    userName = e.target.value;
-  };
+  constructor(props: SignupProps) {
+    super(props);
+    this.state = {
+      submitable: false,
+      userNameValid: null,
+      emailValid: null,
+      passwordValid: null,
+    };
 
-  const handlePassword1Change = (e) => {
-    password1 = e.target.value;
-  };
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleUserNameChange = this.handleUserNameChange.bind(this);
+    this.handleEmailChange = this.handleEmailChange.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
 
-  const handlePassword2Change = (e) => {
-    password2 = e.target.value;
-  };
+    this.userName = '';
+    this.email = '';
+    this.password = '';
+  }
 
-  return (
-    <div>
-      <FormGroup>
-        <h5>Username</h5>
-        <FormControl type="text" value={userName} placeholder="Enter unique user id"
-          onChange={handleUserNameChange}
-        />
-        <h5>Password</h5>
-        <FormControl type="password" value={password1} placeholder=""
-          onChange={handlePassword1Change} />
-        <h5>Password confirmation</h5>
-        <FormControl type="password" value={password2} placeholder=""
-          onChange={handlePassword2Change} />
+  handleSubmit() {
+    this.props.onSubmit(this.userName, this.email, this.password);
+  }
+
+  updateButton(valid: {
+    userNameValid?: ?string,
+    passwordValid?: ?string,
+  }) {
+    const valids = Object.assign({}, {
+      userNameValid: this.state.userNameValid,
+      emailValid: this.state.emailValid,
+      passwordValid: this.state.passwordValid,
+    }, valid);
+
+    const submitable = valids.userNameValid === 'success'
+      && valids.emailValid === 'success'
+      && valids.passwordValid === 'success';
+
+    this.setState({ submitable });
+  }
+
+  handleUserNameChange(e: SyntheticEvent<HTMLInputElement>) {
+    this.userName = e.currentTarget.value;
+
+    const isEmpty = this.userName.length === 0;
+    const valid = this.userName.length >= 3;
+
+    const userNameValid = isEmpty ? null : valid ? 'success' : 'error';
+
+    this.setState({ userNameValid });
+    this.updateButton({ userNameValid });
+  }
+
+  handleEmailChange(e: SyntheticEvent<HTMLInputElement>) {
+    this.email = e.currentTarget.value;
+
+    const isEmpty = this.email.length === 0;
+    const valid = isValidEmailForm(this.email);
+
+    const emailValid = isEmpty ? null : valid ? 'success' : 'error';
+
+    this.setState({ emailValid });
+    this.updateButton({ emailValid });
+  }
+  handlePasswordChange(e: SyntheticEvent<HTMLInputElement>) {
+    this.password = e.currentTarget.value;
+
+    const isEmpty = this.password.length === 0;
+    const valid = this.password.length > 7
+      && hasNumber(this.password)
+      && hasAlphabet(this.password);
+
+    const passwordValid = isEmpty ? null : valid ? 'success' : 'error';
+
+    this.setState({ passwordValid });
+    this.updateButton({ passwordValid });
+  }
+
+  render() {
+    return (
+      <div>
         <br/>
-        <Button bsStyle="primary" onClick={handleSubmit} block>
+        <FormGroup validationState={this.state.userNameValid}>
+          <ControlLabel>Username</ControlLabel>
+          <FormControl
+            type="text"
+            placeholder="Enter unique user id"
+            onChange={this.handleUserNameChange}
+          />
+          <FormControl.Feedback />
+          <HelpBlock>Use at least three characters.</HelpBlock>
+        </FormGroup>
+        <FormGroup validationState={this.state.emailValid}>
+          <ControlLabel>Email</ControlLabel>
+          <FormControl
+            type="email"
+            placeholder="you@example.com"
+            onChange={this.handleEmailChange} />
+          <FormControl.Feedback />
+        </FormGroup>
+        <FormGroup validationState={this.state.passwordValid}>
+          <ControlLabel>Password</ControlLabel>
+          <FormControl
+            type="password"
+            placeholder="Create a password"
+            onChange={this.handlePasswordChange} />
+          <FormControl.Feedback />
+          <HelpBlock>Use at least one letter, one numeral, and seven characters.</HelpBlock>
+        </FormGroup>
+        <br/>
+        <Button bsStyle="primary"
+          onClick={this.handleSubmit}
+          disabled={!this.state.submitable}
+          block
+        >
           Register
         </Button>
-      </FormGroup>
-    </div>
-  );
-};
+      </div>
+    );
+  }
+}
 
 export default Signup;
