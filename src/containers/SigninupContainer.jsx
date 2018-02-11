@@ -15,7 +15,12 @@ const SigninupContainer = (props) => {
   const { onSigninSubmit, onSignupSubmit, history } = props;
 
   const newSigninSubmit = (userName, password) => onSigninSubmit(userName, password, history);
-  const newSignupSubmit = (userName, email, password) => onSignupSubmit(userName, email, password, history);
+  const newSignupSubmit = (userName, email, password) => onSignupSubmit(
+    userName,
+    email,
+    password,
+    history,
+  );
   const newProps = Object.assign({}, props, {
     onSigninSubmit: newSigninSubmit,
     onSignupSubmit: newSignupSubmit,
@@ -41,10 +46,12 @@ const signin = (userName: string, password: string, history: Object) => async (d
   history.push('/');
 };
 
-const signup = (userName: string, email: string, password: string, history: Object) => async (dispatch) => {
+const signup = (userName: string, email: string, password: string, history: Object) => async (
+  dispatch,
+) => {
   const func = 'signup';
 
-  console.log({ file, func, userName });
+  console.log({ file, func, userName, email });
 
   try {
     const user = await apiserver.signup(userName, email, password);
@@ -60,7 +67,12 @@ const signup = (userName: string, email: string, password: string, history: Obje
 
 const mapDispatchToProps = dispatch => ({
   onSigninSubmit: (userName, password, history) => dispatch(signin(userName, password, history)),
-  onSignupSubmit: (userName, email, password, history) => dispatch(signup(userName, email, password, history)),
+  onSignupSubmit: (userName, email, password, history) => dispatch(signup(
+    userName,
+    email,
+    password,
+    history,
+  )),
 });
 
 export default connectWithRouter(

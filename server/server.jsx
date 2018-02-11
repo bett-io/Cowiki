@@ -139,7 +139,7 @@ const setupServer = (app) => {
     const { userName, email, password } = req.body;
 
     db.createUser({ id: userName, email, password }).then(() => {
-      const user = { id: userName };
+      const user = { id: userName, email };
       setIdCookie(res, user);
 
       res.send({ user });

@@ -19,7 +19,7 @@ const signin = async (userName: string, password: string) => {
 const signup = async (userName: string, email: string, password: string) => {
   const res = await axios.post('/api/signup', { userName, email, password });
 
-  console.log({ file, func: 'signup', userName, res });
+  console.log({ file, func: 'signup', userName, email, res });
 
   if (res.status !== 200) throw 'server error';
 
