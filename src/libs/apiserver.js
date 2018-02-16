@@ -16,8 +16,8 @@ const signin = async (userName: string, password: string) => {
   return res.data.user;
 };
 
-const signup = async (userName: string, password: string) => {
-  const res = await axios.post('/api/signup', { userName, password });
+const signup = async (userName: string, email: string, password: string) => {
+  const res = await axios.post('/api/signup', { userName, email, password });
 
   console.log({ file, func: 'signup', userName, res });
 

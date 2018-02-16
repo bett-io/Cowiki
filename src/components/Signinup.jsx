@@ -6,7 +6,7 @@ import Signin from './Signin';
 import Signup from './Signup';
 import { Tabs, Tab, Col } from 'react-bootstrap';
 
-const file = '/src/componrnts/Signinup.jsx';
+const file = '/src/components/Signinup.jsx';
 
 export type SigninupProps = {
   onSigninSubmit: (string, string) => void,
