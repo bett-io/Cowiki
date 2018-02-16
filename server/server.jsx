@@ -136,9 +136,9 @@ const setupServer = (app) => {
 
     console.log({ file, func, body: req.body });
 
-    const { userName, password } = req.body;
+    const { userName, email, password } = req.body;
 
-    db.createUser({ id: userName, password }).then(() => {
+    db.createUser({ id: userName, email, password }).then(() => {
       const user = { id: userName };
       setIdCookie(res, user);
 
