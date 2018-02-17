@@ -6,6 +6,9 @@ export type Article = {
   id: string,
   content: string,
   rev: number,
+  lastDate: number,
+  lastUser: string,
+  lastIp: string,
 }
 
 export type CreateArticle = Article;
