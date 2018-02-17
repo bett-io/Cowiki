@@ -31,6 +31,7 @@ export type Change = {
   uid: string,
   date: number,
   ip: string,
+  note: string,
   change: string,
 }
 

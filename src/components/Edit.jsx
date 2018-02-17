@@ -15,7 +15,7 @@ export type EditProps = {
   pageId: string,
   content: string,
   revision: number,
-  onSubmit: (string, number) => void,
+  onSubmit: (string, number, string) => void,
 }
 
 type State = {
@@ -25,10 +25,12 @@ type State = {
 class Edit extends Component<EditProps, State> {
   content: string;
   title: string;
+  changeNote: string,
   handleSubmit: () => void;
   handleSelect: (number) => void;
   handleTitleChange: (SyntheticEvent<HTMLInputElement>) => void;
   handleContentChange: (SyntheticEvent<HTMLInputElement>) => void;
+  handleNoteChange: (SyntheticEvent<HTMLInputElement>) => void;
 
   constructor(props: EditProps) {
     super(props);
@@ -42,6 +44,7 @@ class Edit extends Component<EditProps, State> {
     this.handleSelect = this.handleSelect.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleContentChange = this.handleContentChange.bind(this);
+    this.handleNoteChange = this.handleNoteChange.bind(this);
   }
 
   getPreview() {
@@ -49,7 +52,7 @@ class Edit extends Component<EditProps, State> {
   }
 
   handleSubmit() {
-    this.props.onSubmit(this.content, this.props.revision);
+    this.props.onSubmit(this.content, this.props.revision, this.changeNote);
   }
 
   handleSelect(key: number) {
@@ -65,6 +68,10 @@ class Edit extends Component<EditProps, State> {
 
   handleContentChange(e: SyntheticEvent<HTMLInputElement>) {
     this.content = e.currentTarget.value;
+  }
+
+  handleNoteChange(e: SyntheticEvent<HTMLInputElement>) {
+    this.changeNote = e.currentTarget.value;
   }
 
   render() {
@@ -103,6 +110,7 @@ class Edit extends Component<EditProps, State> {
           <FormControl
             type="text"
             placeholder="Write a small message here explaining this change. (Optional)"
+            onChange={this.handleNoteChange}
           />
           <br />
           <Button className="pull-right" bsStyle="success" onClick={this.handleSubmit}>
