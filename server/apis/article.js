@@ -20,8 +20,17 @@ const read = async (id: string): Promise<?Article> => {
   return article || { id, rev: -1 };
 };
 
-const update = async (id: string, content: string, currentRev: number): Promise<any> => {
+const update = async (
+  id: string,
+  content: string,
+  currentRev: number,
+  uid: string,
+  ip: string,
+): Promise<any> => {
   const article = await read(id);
+  const func = 'update';
+
+  console.log({ file, func, id, content, currentRev, uid, ip });
 
   assert(currentRev >= 0);
 
@@ -29,7 +38,7 @@ const update = async (id: string, content: string, currentRev: number): Promise<
 
   const change = createPatch(id, article.content, content, currentRev, currentRev + 1);
 
-  console.log({ file, func: 'update', change });
+  console.log({ file, func, change });
 
   const updateArticle = db.updateArticle(Object.assign({}, article, {
     content,
@@ -38,6 +47,9 @@ const update = async (id: string, content: string, currentRev: number): Promise<
   const createChange = db.createChange({
     id: article.id,
     rev: currentRev + 1,
+    uid,
+    date: Date.now(),
+    ip,
     change,
   });
 

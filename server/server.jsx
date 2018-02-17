@@ -48,6 +48,25 @@ const setupServer = (app) => {
   app.use(cookieParser());
   app.use(bodyParser.json()); // for parsing POST body
 
+  app.use(
+    expressJwt({
+      secret: authConfig.jwt.secret,
+      credentialsRequired: false,
+      getToken: req => { console.log(req.cookies); return req.cookies ? req.cookies.id_token : undefined },
+    }),
+  );
+
+  // Error handler for express-jwt
+  app.use((err, req, res, next) => {
+    const func = 'app.use Jwt401Error';
+
+    if (err instanceof Jwt401Error) {
+      console.error(file, func, req.cookies.id_token);
+      res.clearCookie('id_token');
+    }
+    next(err);
+  });
+
   // Article APIs
   app.post('/api/article/*?', (req, res) => {
     const func = 'app.post /api/article/:id';
@@ -84,7 +103,9 @@ const setupServer = (app) => {
 
     const { content, rev } = req.body;
 
-    article.update(req.params[0], content, rev)
+    const uid = req.user ? req.user.id : '';
+
+    article.update(req.params[0], content, rev, uid, req.ip)
       .then(result => res.send(result))
       .catch(error => {
         console.log({ file, func, error });
@@ -170,25 +191,6 @@ const setupServer = (app) => {
       console.log({ file, func, error });
       res.status(403).send(error);
     })
-  });
-
-  // Authentication
-  app.use(
-    expressJwt({
-      secret: authConfig.jwt.secret,
-      credentialsRequired: false,
-      getToken: req => { console.log(req.cookies); return req.cookies ? req.cookies.id_token : undefined },
-    }),
-  );
-  // Error handler for express-jwt
-  app.use((err, req, res, next) => {
-    const func = 'app.use Jwt401Error';
-
-    if (err instanceof Jwt401Error) {
-      console.error(file, func, req.cookies.id_token);
-      res.clearCookie('id_token');
-    }
-    next(err);
   });
 
   // Pages
