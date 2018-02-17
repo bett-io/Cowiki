@@ -8,19 +8,31 @@ export type Article = {
   rev: number,
 }
 
-export type User = {
-  id: string,
-  email: string,
-  password: string,
-}
-
 export type CreateArticle = Article;
 export type ReadArticle = {
   id: string,
 };
 export type UpdateArticle = Article;
 
+export type User = {
+  id: string,
+  email: string,
+  password: string,
+}
+
 export type CreateUser = User;
 export type ReadUser = {
   id: string,
+};
+
+export type Change = {
+  id: string,
+  rev: number,
+  change: string,
+}
+
+export type CreateChange = Change;
+export type ReadChange = {
+  id: string,
+  rev: number,
 };

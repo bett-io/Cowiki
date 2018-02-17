@@ -11,6 +11,9 @@ import type {
   CreateUser,
   ReadUser,
   User,
+  CreateChange,
+  ReadChange,
+  Change,
 } from './db.flow';
 
 let useLoki = false;
@@ -38,6 +41,12 @@ const createUser = async (doc: CreateUser): Promise<User> =>
 const readUser = async (doc: ReadUser): Promise<User> =>
   useLoki ? loki.readUser(doc) : dynamoDB.readUser(doc);
 
+const createChange = async (doc: CreateChange): Promise<Change> =>
+  useLoki ? loki.createChange(doc) : dynamoDB.createChange(doc);
+
+const readChange = async (doc: ReadChange): Promise<Change> =>
+  useLoki ? loki.readChange(doc) : dynamoDB.readChange(doc);
+
 export default {
   init,
   createArticle,
@@ -45,4 +54,6 @@ export default {
   updateArticle,
   createUser,
   readUser,
+  createChange,
+  readChange,
 };

@@ -12,6 +12,9 @@ import type {
   CreateUser,
   ReadUser,
   User,
+  CreateChange,
+  ReadChange,
+  Change,
 } from './db.flow';
 
 const db = new loki('local.db');
@@ -50,10 +53,24 @@ const readUser = (doc: ReadUser): ?User => {
   return users.findOne(doc);
 };
 
+const createChange = (doc: CreateChange): boolean => {
+  console.log({ file, function: 'createChange', doc });
+
+  return users.insert(doc);
+};
+
+const readChange = (doc: ReadChange): ?Change => {
+  console.log({ file, function: 'readChange', doc });
+
+  return users.findOne(doc);
+};
+
 export default {
   createArticle,
   readArticle,
   updateArticle,
   createUser,
   readUser,
+  createChange,
+  readChange,
 };
