@@ -158,6 +158,22 @@ const setupServer = (app) => {
     res.send();
   });
 
+  app.post('/api/signup_check/username', (req, res) => {
+    const func = 'app.post /api/signup_check/username';
+
+    console.log({ file, func, body: req.body });
+
+    const { userName } = req.body;
+
+    db.readUser({ id: userName }).then((user) => {
+      res.send({ result: !user });
+      return;
+    }).catch(error => {
+      console.log({ file, func, error });
+      res.status(403).send(error);
+    })
+  });
+
   // Authentication
   app.use(
     expressJwt({

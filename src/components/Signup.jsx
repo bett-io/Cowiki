@@ -10,8 +10,11 @@ import {
   HelpBlock,
 } from 'react-bootstrap';
 
+const file = '/src/components/Signup.jsx';
+
 export type SignupProps = {
   onSubmit: (string, string, string) => void,
+  checkUserNameUnique: (string) => Promise<boolean>,
 }
 
 type State = {
@@ -27,12 +30,14 @@ const isValidEmailForm = str => /.+@.+\..+/.test(str);
 
 export class Signup extends React.Component<SignupProps, State> {
   userName: string;
+  userNameCheckTimer: number;
   email: string;
   password: string;
   handleSubmit: () => void;
   handleUserNameChange: (SyntheticEvent<HTMLInputElement>) => void;
   handleEmailChange: (SyntheticEvent<HTMLInputElement>) => void;
   handlePasswordChange: (SyntheticEvent<HTMLInputElement>) => void;
+  checkUserNameUnique: (string) => Promise<boolean>;
 
   constructor(props: SignupProps) {
     super(props);
@@ -47,8 +52,10 @@ export class Signup extends React.Component<SignupProps, State> {
     this.handleUserNameChange = this.handleUserNameChange.bind(this);
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.checkUserNameUnique = this.checkUserNameUnique.bind(this);
 
     this.userName = '';
+    this.userNameCheckTimer = 0;
     this.email = '';
     this.password = '';
   }
@@ -74,16 +81,49 @@ export class Signup extends React.Component<SignupProps, State> {
     this.setState({ submitable });
   }
 
+  updateStateAndButton(valid: {
+    userNameValid?: ?string,
+    passwordValid?: ?string,
+  }) {
+    this.setState(valid);
+    this.updateButton(valid);
+  }
+
+  checkUserNameUnique() {
+    const func = 'checkUserNameUnique';
+
+    this.updateStateAndButton({ userNameValid: null });
+
+    this.props.checkUserNameUnique(this.userName)
+      .then((result) => {
+        console.log({ file, func, result });
+
+        this.updateStateAndButton({ userNameValid: result ? 'success' : 'warning' });
+      })
+      .catch((error) => {
+        console.log({ file, func, error });
+
+        this.updateStateAndButton({ userNameValid: 'success' });
+      });
+  }
+
   handleUserNameChange(e: SyntheticEvent<HTMLInputElement>) {
     this.userName = e.currentTarget.value;
 
     const isEmpty = this.userName.length === 0;
+    if (isEmpty) {
+      this.updateStateAndButton({ userNameValid: null });
+      return;
+    }
+
     const valid = this.userName.length >= 3;
+    if (!valid) {
+      this.updateStateAndButton({ userNameValid: 'error' });
+      return;
+    }
 
-    const userNameValid = isEmpty ? null : valid ? 'success' : 'error';
-
-    this.setState({ userNameValid });
-    this.updateButton({ userNameValid });
+    clearTimeout(this.userNameCheckTimer);
+    this.userNameCheckTimer = setTimeout(this.checkUserNameUnique, 300);
   }
 
   handleEmailChange(e: SyntheticEvent<HTMLInputElement>) {
@@ -94,8 +134,7 @@ export class Signup extends React.Component<SignupProps, State> {
 
     const emailValid = isEmpty ? null : valid ? 'success' : 'error';
 
-    this.setState({ emailValid });
-    this.updateButton({ emailValid });
+    this.updateStateAndButton({ emailValid });
   }
   handlePasswordChange(e: SyntheticEvent<HTMLInputElement>) {
     this.password = e.currentTarget.value;
@@ -107,8 +146,12 @@ export class Signup extends React.Component<SignupProps, State> {
 
     const passwordValid = isEmpty ? null : valid ? 'success' : 'error';
 
-    this.setState({ passwordValid });
-    this.updateButton({ passwordValid });
+    this.updateStateAndButton({ passwordValid });
+  }
+
+  createUserNameHelpBlock(userNameValid: ?string) {
+    if (userNameValid === 'error') return (<HelpBlock>Use at least three characters.</HelpBlock>);
+    if (userNameValid === 'warning') return (<HelpBlock>Username is already taken.</HelpBlock>);
   }
 
   render() {
@@ -123,7 +166,7 @@ export class Signup extends React.Component<SignupProps, State> {
             onChange={this.handleUserNameChange}
           />
           <FormControl.Feedback />
-          <HelpBlock>Use at least three characters.</HelpBlock>
+          { this.createUserNameHelpBlock(this.state.userNameValid) }
         </FormGroup>
         <FormGroup validationState={this.state.emailValid}>
           <ControlLabel>Email</ControlLabel>

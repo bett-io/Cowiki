@@ -65,6 +65,22 @@ const signup = (userName: string, email: string, password: string, history: Obje
   history.push('/');
 };
 
+const checkUserNameUnique = async (userName: string): Promise<boolean> => {
+  const func = 'checkUserNameUnique';
+
+  console.log({ file, func });
+
+  try {
+    const result = await apiserver.checkUserNameUnique(userName);
+
+    return result;
+  } catch (error) {
+    console.log({ file, func, error });
+  }
+
+  return true;
+};
+
 const mapDispatchToProps = dispatch => ({
   onSigninSubmit: (userName, password, history) => dispatch(signin(userName, password, history)),
   onSignupSubmit: (userName, email, password, history) => dispatch(signup(
@@ -73,6 +89,7 @@ const mapDispatchToProps = dispatch => ({
     password,
     history,
   )),
+  checkUserNameUnique,
 });
 
 export default connectWithRouter(

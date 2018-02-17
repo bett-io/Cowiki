@@ -11,10 +11,11 @@ const file = '/src/components/Signinup.jsx';
 export type SigninupProps = {
   onSigninSubmit: (string, string) => void,
   onSignupSubmit: (string, string) => void,
+  checkUserNameUnique: (string) => Promise<boolean>,
 }
 
 const Signinup = (props: SigninupProps) => {
-  const { onSigninSubmit, onSignupSubmit } = props;
+  const { onSigninSubmit, onSignupSubmit, checkUserNameUnique } = props;
 
   console.log({ file, func: 'Signinup' });
 
@@ -26,7 +27,7 @@ const Signinup = (props: SigninupProps) => {
             <Signin onSubmit={onSigninSubmit} />
           </Tab>
           <Tab eventKey={2} title="Register">
-            <Signup onSubmit={onSignupSubmit} />
+            <Signup onSubmit={onSignupSubmit} checkUserNameUnique={checkUserNameUnique} />
           </Tab>
         </Tabs>
       </Col>

@@ -4,6 +4,22 @@ import axios from 'axios';
 
 const file = '/src/libs/apiserver';
 
+const checkUserNameUnique = async (userName: string) => {
+  const func = 'checkUserNameUnique';
+
+  try {
+    const res = await axios.post('/api/signup_check/username', { userName });
+
+    console.log({ file, func, userName, res });
+
+    return res.data.result;
+  } catch (error) {
+    console.log({ file, func, userName, error });
+  }
+
+  return false;
+};
+
 const signin = async (userName: string, password: string) => {
   const res = await axios.post('/api/signin', { userName, password });
 
@@ -37,6 +53,7 @@ const signout = async () => {
 };
 
 export default {
+  checkUserNameUnique,
   signin,
   signup,
   signout,
