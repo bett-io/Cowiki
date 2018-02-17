@@ -67,8 +67,6 @@ const setupServer = (app) => {
     const func = 'app.get /api/article/:id';
     console.log({ file, func, params: req.params });
 
-    console.log(req.params);
-
     article.read(req.params[0])
       .then(result => {
         console.log({ file, func, result });
