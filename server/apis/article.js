@@ -26,11 +26,12 @@ const update = async (
   currentRev: number,
   uid: string,
   ip: string,
+  note: string,
 ): Promise<any> => {
   const article = await read(id);
   const func = 'update';
 
-  console.log({ file, func, id, content, currentRev, uid, ip });
+  console.log({ file, func, id, content, currentRev, uid, ip, note });
 
   assert(currentRev >= 0);
 
@@ -44,14 +45,20 @@ const update = async (
     content,
     rev: currentRev + 1,
   }));
-  const createChange = db.createChange({
+
+  // Don't include note to doc if it is zero length string because DynamoDB considers it is invalid.
+  // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB.html#putItem-property
+  const noteObj = note ? { note } : {};
+  const doc = Object.assign({}, {
     id: article.id,
     rev: currentRev + 1,
     uid,
     date: Date.now(),
     ip,
     change,
-  });
+  }, noteObj);
+
+  const createChange = db.createChange(doc);
 
   return new Promise((resolve, reject) => {
     Promise.all([updateArticle, createChange])

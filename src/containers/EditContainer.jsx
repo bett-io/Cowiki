@@ -13,18 +13,24 @@ const file = '/src/containers/EditContainer';
 const EditContainer = (props) => {
   const { pageId, onSubmit, history } = props;
 
-  const _onSubmit = (content, rev) => onSubmit(pageId, content, rev, history);
+  const _onSubmit = (content, rev, note) => onSubmit(pageId, content, rev, note, history);
   const args = Object.assign({}, props, { onSubmit: _onSubmit });
 
   return (<Edit {...args} />);
 };
 
-const updateArticle = async (id: string, content: string, rev: number, history: Object) => {
-  console.log({ file, function: 'updateArticle', id, content, rev });
+const updateArticle = async (
+  id: string,
+  content: string,
+  rev: number,
+  note: string,
+  history: Object,
+) => {
+  console.log({ file, func: 'updateArticle', id, content, rev, note });
   if (rev < 0) {
     await axios.post(`/api/article/${id}`, { content });
   } else {
-    await axios.put(`/api/article/${id}`, { content, rev });
+    await axios.put(`/api/article/${id}`, { content, rev, note });
   }
 
   history.push(`/w/${id}`);

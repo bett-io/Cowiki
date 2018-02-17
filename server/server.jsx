@@ -101,11 +101,11 @@ const setupServer = (app) => {
     const func = 'app.put /api/article/:id';
     console.log({ file, func, params: req.params, body: req.body });
 
-    const { content, rev } = req.body;
+    const { content, rev, note } = req.body;
 
     const uid = req.user ? req.user.id : '';
 
-    article.update(req.params[0], content, rev, uid, req.ip)
+    article.update(req.params[0], content, rev, uid, req.ip, note)
       .then(result => res.send(result))
       .catch(error => {
         console.log({ file, func, error });
