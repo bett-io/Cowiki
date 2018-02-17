@@ -74,7 +74,9 @@ const setupServer = (app) => {
 
     const { content } = req.body;
 
-    article.create(req.params[0], content)
+    const uid = req.user ? req.user.id : '';
+
+    article.create(req.params[0], content, uid, req.ip)
       .then(result => res.send(result))
       .catch(error => {
         console.log({ file, func, error });

@@ -8,10 +8,18 @@ import type { Article } from '../db/db.flow';
 
 const file = '/server/apis/article.js';
 
-const create = async (id: string, content: string): Promise<boolean> => db.createArticle({
+const create = async (
+  id: string,
+  content: string,
+  uid: string,
+  ip: string,
+): Promise<boolean> => db.createArticle({
   id,
   content,
   rev: 0,
+  lastDate: Date.now(),
+  lastUser: uid,
+  lastIp: ip,
 });
 
 const read = async (id: string): Promise<?Article> => {
@@ -41,9 +49,14 @@ const update = async (
 
   console.log({ file, func, change });
 
+  const date = Date.now();
+
   const updateArticle = db.updateArticle(Object.assign({}, article, {
     content,
     rev: currentRev + 1,
+    lastDate: date,
+    lastUser: uid,
+    lastIp: ip,
   }));
 
   // Don't include note to doc if it is zero length string because DynamoDB considers it is invalid.
@@ -53,7 +66,7 @@ const update = async (
     id: article.id,
     rev: currentRev + 1,
     uid,
-    date: Date.now(),
+    date,
     ip,
     change,
   }, noteObj);
