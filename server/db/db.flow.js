@@ -28,6 +28,9 @@ export type ReadUser = {
 export type Change = {
   id: string,
   rev: number,
+  uid: string,
+  date: number,
+  ip: string,
   change: string,
 }
 
