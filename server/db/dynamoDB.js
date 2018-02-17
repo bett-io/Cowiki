@@ -109,6 +109,8 @@ const readUser = async (doc: ReadUser): Promise<User> => {
 
   try {
     const result: UserQueryResult = await docClient().query(params).promise();
+    console.log({ file, func, result });
+
     return result.Items[0];
   } catch (e) {
     console.error({ file, func, error: e });
