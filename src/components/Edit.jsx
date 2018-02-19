@@ -1,8 +1,15 @@
 // @flow
 
-import React from 'react';
+import React, { Component } from 'react';
 
-import { FormGroup, FormControl, Tabs, Tab, Button } from 'react-bootstrap';
+import marked from 'marked';
+import {
+  FormGroup,
+  FormControl,
+  Tabs,
+  Tab,
+  Button,
+} from 'react-bootstrap';
 
 export type EditProps = {
   pageId: string,
@@ -11,47 +18,96 @@ export type EditProps = {
   onSubmit: (string, number) => void,
 }
 
-const Edit = (props: EditProps) => {
-  const { pageId, content, revision, onSubmit } = props;
-  let title;
-  let updatedContent = content;
+class Edit extends Component {
+  content: string;
+  title: string;
+  handleSubmit: () => void;
+  handleSelect: (SyntheticEvent<HTMLInputElement>) => void;
+  handleTitleChange: (SyntheticEvent<HTMLInputElement>) => void;
+  handleContentChange: (SyntheticEvent<HTMLInputElement>) => void;
 
-  const handleSubmit = () => {
-    onSubmit(updatedContent, revision);
-  };
+  constructor(props) {
+    super(props);
+    const { content, pageId } = this.props;
+    this.content = content;
+    this.title = pageId;
+    this.state = {
+      preview: '',
+    };
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSelect = this.handleSelect.bind(this);
+    this.handleTitleChange = this.handleTitleChange.bind(this);
+    this.handleContentChange = this.handleContentChange.bind(this);
+  }
 
-  const handleTitleChange = (e) => {
-    title = e.target.value;
-  };
+  getPreview() {
+    return this.content ? marked(this.content) : '';
+  }
 
-  const handleContentChange = (e) => {
-    updatedContent = e.target.value;
-  };
+  handleSubmit() {
+    this.props.onSubmit(this.content, this.props.revision);
+  }
 
-  return (
-    <div>
-      <h1>Editing {pageId}</h1>
-      <FormGroup>
-        <FormControl type="text" value={pageId} placeholder="Enter title"
-          onChange={handleTitleChange} />
-        <br/>
-        <Tabs defaultActiveKey={1} id="write-preview">
-          <Tab eventKey={1} title="Write">
-            <FormControl componentClass="textarea" rows={15} defaultValue={updatedContent}
-              onChange={handleContentChange} />
-          </Tab>
-          <Tab eventKey={2} title="Preview">
-            Preview placeholder
-          </Tab>
-        </Tabs>
-        <br/>
-        <h5>Edit Message</h5>
-        <FormControl type="text" placeholder="Write a small message here explaining this change. (Optional)" />
-        <br/>
-        <Button className="pull-right" bsStyle="success" onClick={handleSubmit}>Save Page</Button>
-      </FormGroup>
-    </div>
-  );
-};
+  handleSelect(key) {
+    // 2 is preview.
+    if (key === 2) {
+      this.setState({ preview: this.getPreview() });
+    }
+  }
+
+  handleTitleChange(e) {
+    this.title = e.target.value;
+  }
+
+  handleContentChange(e) {
+    this.content = e.target.value;
+  }
+
+  render() {
+    const { pageId, content } = this.props;
+
+    return (
+      <div>
+        <h1>Editing {pageId}</h1>
+        <FormGroup>
+          <FormControl
+            type="text"
+            value={this.title}
+            placeholder="Enter title"
+            onChange={this.handleTitleChange}
+          />
+          <br />
+          <Tabs
+            defaultActiveKey={1}
+            id="write-preview"
+            onSelect={this.handleSelect}
+          >
+            <Tab eventKey={1} title="Write">
+              <FormControl
+                componentClass="textarea"
+                rows={15}
+                defaultValue={content}
+                onChange={this.handleContentChange}
+              />
+            </Tab>
+            <Tab eventKey={2} title="Preview">
+              <div dangerouslySetInnerHTML={{ __html: this.state.preview }} />
+            </Tab>
+          </Tabs>
+          <br />
+          <h5>Edit Message</h5>
+          <FormControl
+            type="text"
+            placeholder="Write a small message here explaining this change. (Optional)"
+          />
+          <br />
+          <Button className="pull-right" bsStyle="success" onClick={this.handleSubmit}>
+            Save Page
+          </Button>
+        </FormGroup>
+      </div>
+    );
+  }
+}
 
 export default Edit;
