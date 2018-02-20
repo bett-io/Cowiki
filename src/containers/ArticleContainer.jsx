@@ -11,13 +11,21 @@ const file = '/src/containers/ArticleContainer';
 
 const ArticleContainer = (props) => {
   const { pageId } = props.match.params;
-  const { content, revision, onReadArticle } = props;
+  const { content, revision, onReadArticle, lastDate, lastUser, lastIp } = props;
 
+  console.log(props);
   console.log({ file, func: 'ArticleContainer', pageId });
 
   onReadArticle(pageId);
 
-  return (<Article pageId={pageId} content={content} revision={revision}/>);
+  return (<Article
+    pageId={pageId}
+    content={content}
+    revision={revision}
+    lastDate={lastDate}
+    lastUser={lastUser}
+    lastIp={lastIp}
+  />);
 };
 
 const readArticle = id => async (dispatch) => {
@@ -32,10 +40,15 @@ const mapStateToProps = (state, ownProps) => {
   const { pageId } = ownProps.match.params;
 
   const article = state.articles[pageId];
+  console.log(article);
+  const { content, rev, lastDate, lastUser, lastIp } = article || {};
 
   return {
-    content: article && article.content,
+    content,
     revision: article && article.rev,
+    lastDate,
+    lastUser,
+    lastIp,
   };
 };
 
