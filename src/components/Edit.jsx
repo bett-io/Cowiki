@@ -18,15 +18,19 @@ export type EditProps = {
   onSubmit: (string, number) => void,
 }
 
-class Edit extends Component {
+type State = {
+  preview: string,
+}
+
+class Edit extends Component<EditProps, State> {
   content: string;
   title: string;
   handleSubmit: () => void;
-  handleSelect: (SyntheticEvent<HTMLInputElement>) => void;
+  handleSelect: (number) => void;
   handleTitleChange: (SyntheticEvent<HTMLInputElement>) => void;
   handleContentChange: (SyntheticEvent<HTMLInputElement>) => void;
 
-  constructor(props) {
+  constructor(props: EditProps) {
     super(props);
     const { content, pageId } = this.props;
     this.content = content;
@@ -48,19 +52,19 @@ class Edit extends Component {
     this.props.onSubmit(this.content, this.props.revision);
   }
 
-  handleSelect(key) {
+  handleSelect(key: number) {
     // 2 is preview.
     if (key === 2) {
       this.setState({ preview: this.getPreview() });
     }
   }
 
-  handleTitleChange(e) {
-    this.title = e.target.value;
+  handleTitleChange(e: SyntheticEvent<HTMLInputElement>) {
+    this.title = e.currentTarget.value;
   }
 
-  handleContentChange(e) {
-    this.content = e.target.value;
+  handleContentChange(e: SyntheticEvent<HTMLInputElement>) {
+    this.content = e.currentTarget.value;
   }
 
   render() {
