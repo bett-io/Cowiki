@@ -60,7 +60,8 @@ export class Signup extends React.Component<SignupProps, State> {
     this.password = '';
   }
 
-  handleSubmit() {
+  handleSubmit(e: SyntheticEvent<HTMLInputElement>) {
+    e.preventDefault();
     this.props.onSubmit(this.userName, this.email, this.password);
   }
 
@@ -136,6 +137,7 @@ export class Signup extends React.Component<SignupProps, State> {
 
     this.updateStateAndButton({ emailValid });
   }
+
   handlePasswordChange(e: SyntheticEvent<HTMLInputElement>) {
     this.password = e.currentTarget.value;
 
@@ -156,7 +158,7 @@ export class Signup extends React.Component<SignupProps, State> {
 
   render() {
     return (
-      <div>
+      <form onSubmit={this.handleSubmit}>
         <br/>
         <FormGroup validationState={this.state.userNameValid}>
           <ControlLabel>Username</ControlLabel>
@@ -186,14 +188,15 @@ export class Signup extends React.Component<SignupProps, State> {
           <HelpBlock>Use at least one letter, one numeral, and seven characters.</HelpBlock>
         </FormGroup>
         <br/>
-        <Button bsStyle="primary"
-          onClick={this.handleSubmit}
+        <Button
+          bsStyle="primary"
+          type="submit"
           disabled={!this.state.submitable}
           block
         >
           Register
         </Button>
-      </div>
+      </form>
     );
   }
 }
