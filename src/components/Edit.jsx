@@ -25,7 +25,7 @@ type State = {
 class Edit extends Component<EditProps, State> {
   content: string;
   title: string;
-  changeNote: string,
+  changeNote: string;
   handleSubmit: () => void;
   handleSelect: (number) => void;
   handleTitleChange: (SyntheticEvent<HTMLInputElement>) => void;
