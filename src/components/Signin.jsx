@@ -33,7 +33,8 @@ export class Signin extends React.Component<SigninProps, State> {
     this.password = '';
   }
 
-  handleSubmit() {
+  handleSubmit(e: SyntheticEvent<HTMLInputElement>) {
+    e.preventDefault();
     this.props.onSubmit(this.userName, this.password);
   }
 
@@ -54,7 +55,7 @@ export class Signin extends React.Component<SigninProps, State> {
 
   render() {
     return (
-      <div>
+      <form onSubmit={this.handleSubmit}>
         <FormGroup>
           <h5>Username</h5>
           <FormControl type="text" placeholder=""
@@ -65,14 +66,14 @@ export class Signin extends React.Component<SigninProps, State> {
           <br/>
           <Button
             bsStyle="success"
-            onClick={this.handleSubmit}
+            type="submit"
             disabled={!this.state.submitable}
             block
           >
             Signin
           </Button>
         </FormGroup>
-      </div>
+      </form>
     );
   }
 }
