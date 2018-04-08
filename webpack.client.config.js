@@ -2,6 +2,8 @@ const webpack = require('webpack');
 const path = require('path');
 
 const config = {
+  mode: 'production',
+
   entry: [
     'babel-polyfill', // https://github.com/babel/babel-preset-env/issues/112
     './src/index.js',
