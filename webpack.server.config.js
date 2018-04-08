@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports = {
+  mode: 'production',
+
   entry: [
     'babel-polyfill', // https://github.com/babel/babel-preset-env/issues/112
     path.resolve(__dirname, 'server/lambda.js'),
